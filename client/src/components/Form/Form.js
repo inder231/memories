@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import FileBase from "react-file-base64";
 import useStyles from "./styles";
-import { useDispatch } from "react-redux";
-import {createNewPost} from "../../redux/Appreducer/posts.js"
+import { useDispatch, useSelector } from "react-redux";
+import { createNewPost, updatePost } from "../../redux/Appreducer/posts.js";
 
-const Form = () => {
+const Form = ({ currentId, setCurrentId }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [postData, setPostData] = useState({
@@ -16,11 +16,33 @@ const Form = () => {
     selectedFile: "",
   });
 
+  const post = useSelector((store) =>
+    currentId ? store.appreducer.posts.find((p) => p._id === currentId) : null
+  );
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createNewPost(postData));
+    if (currentId) {
+      dispatch(updatePost(currentId, postData));
+    } else {
+      dispatch(createNewPost(postData));
+    }
+    clear();
   };
-  const clear = () => {};
+  const clear = () => {
+    setCurrentId(null);
+    setPostData({
+      creator: "",
+      title: "",
+      message: "",
+      tags: "",
+      selectedFile: "",
+    });
+  };
+
+  useEffect(() => {
+    if (post) setPostData(post);
+  }, [post]);
   return (
     <>
       <Paper className={classes.paper}>
@@ -30,9 +52,10 @@ const Form = () => {
           className={`${classes.form} ${classes.root}`}
           onSubmit={handleSubmit}
         >
-          <Typography variant="h6">Creating a Memory</Typography>
+          <Typography variant="h6">{`${
+            currentId ? "Editing" : "Creating"
+          } a Memory`}</Typography>
           <TextField
-            name="creator"
             variant="outlined"
             label="Creator"
             fullWidth
@@ -42,7 +65,6 @@ const Form = () => {
             }
           />
           <TextField
-            name="title"
             variant="outlined"
             label="Title"
             fullWidth
@@ -52,7 +74,6 @@ const Form = () => {
             }
           />
           <TextField
-            name="message"
             variant="outlined"
             label="Message"
             fullWidth
@@ -62,7 +83,6 @@ const Form = () => {
             }
           />
           <TextField
-            name="tags"
             variant="outlined"
             label="Tags"
             fullWidth

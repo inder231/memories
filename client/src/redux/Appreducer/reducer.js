@@ -3,6 +3,7 @@ const initState = {
   posts: [],
   isLoading: false,
   isError: false,
+  errorMessage: "",
 };
 
 export const appreducer = (state = initState, { type, payload }) => {
@@ -23,6 +24,45 @@ export const appreducer = (state = initState, { type, payload }) => {
         ...state,
         isLoading: false,
         isError: true,
+        errorMessage: payload,
+      };
+    case types.CREATE_POST_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case types.CREATE_POST_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        posts: [...state.posts, payload],
+      };
+    case types.CREATE_POST_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMessage: payload,
+      };
+    case types.UPDATE_POST_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case types.UPDATE_POST_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        posts: state.posts.map((post) =>
+          post._id === payload._id ? payload : post
+        ),
+      };
+    case types.UPDATE_POST_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMessage: payload,
       };
     default:
       return state;
