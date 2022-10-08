@@ -5,4 +5,8 @@ const saveToLocalStorage = (key, value) => {
 const getFromLocalStorage = (key) => {
   return JSON.parse(localStorage.getItem(key));
 };
-export { saveToLocalStorage, getFromLocalStorage };
+const removeFromLocalStorage = (key) => {
+  localStorage.removeItem(key);
+  return true;
+}
+export { saveToLocalStorage, getFromLocalStorage,removeFromLocalStorage };

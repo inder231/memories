@@ -1,10 +1,13 @@
-import { saveToLocalStorage } from "../../utils/localstorage";
+import {
+  saveToLocalStorage,
+  removeFromLocalStorage,
+} from "../../utils/localstorage";
 import * as types from "./actionTypes";
 const initState = {
   isLoading: false,
   isError: false,
   isAuth: false,
-  profile: "",
+  profile: null,
 };
 
 export const authreducer = (state = initState, { type, payload }) => {
@@ -27,6 +30,13 @@ export const authreducer = (state = initState, { type, payload }) => {
         ...state,
         isLoading: false,
         isError: true,
+      };
+    case types.GOOGLE_LOGOUT_SUCCESS:
+      removeFromLocalStorage("profile");
+      return {
+        ...state,
+        isAuth: false,
+        profile: null,
       };
     default:
       return state;
