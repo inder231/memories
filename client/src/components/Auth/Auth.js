@@ -17,6 +17,13 @@ import useStyles from "./styles";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
+const initState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,23 +31,36 @@ const Auth = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authstore = useSelector((store) => store.authreducer);
+  // const authstore = useSelector((store) => store.authreducer);
+  const [formData, setFormData] = useState(initState);
 
+  // ================ FORM CHANGE HANDLES =====================
+  const handleChange = (e) => {
+    const {name,value} = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  // ============= FORM SUBMIT =============================
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(isSignup){
+      // signup user
+      dispatch(signup(formData));
+    }else{
+      // sign in user 
+      dispatch(signin(formData));
+    }
   };
 
-  const handleChange = (e) => {};
-
+  // ============= TOOGLE PASSWORD VISIBILITY ========================
   const handleShowPassword = (e) => {
     setShowPassword((showPassword) => !showPassword);
   };
-
+  // ========== SWITCH SIGN IN <==> SIGN UP =================
   const switchMode = () => {
     setIsSignup((prevIsSignup) => !prevIsSignup);
     handleShowPassword();
   };
-
+  // =========== GOOGLE SUCCESS RESPONSE ====================
   const responseGoogleSuccess = async (res) => {
     dispatch({ type: types.GOOGLE_SIGNIN_REQUEST });
     const result = res.profileObj;
@@ -55,9 +75,11 @@ const Auth = () => {
       dispatch({ type: types.GOOGLE_SIGNIN_FAILURE });
     }
   };
+  // ========== GOOGLE FAILURE RESPONSE ==================
   const responseGoogleError = async (err) => {
     console.log(err);
   };
+  // ======================================================
 
   useEffect(() => {
     gapi.load("client:auth2", () => {
