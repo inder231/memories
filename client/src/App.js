@@ -5,7 +5,7 @@ import Allroutes from "./components/Routes/Allroutes";
 
 const App = () => {
   return (
-    <Container maxidth="lg">
+    <Container maxidth="xl">
       <Navbar />
       <Allroutes/>
     </Container>

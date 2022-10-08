@@ -24,6 +24,6 @@ export const auth = async (req, res, next) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Something went wrong Please try again" });
+      .json({ message: "Something went wrong Please try login again" });
   }
 };

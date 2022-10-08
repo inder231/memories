@@ -3,29 +3,57 @@ import useStyles from "./styles";
 import moment from "moment";
 import {
   Card,
-  CardActions,
   CardContent,
   Button,
   Typography,
   CardMedia,
 } from "@material-ui/core";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
+import ThumbUpOutlined from "@material-ui/icons/ThumbUpOutlined";
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { useDispatch } from "react-redux";
-import { deletePost,likePost } from "../../../redux/Appreducer/posts";
-
+import { deletePost, likePost } from "../../../redux/Appreducer/posts";
+import { getFromLocalStorage } from "../../../utils/localstorage";
 
 const Post = ({ post, setCurrentId }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const user = getFromLocalStorage("profile");
+
+  const Likes = () => {
+    if (post.likes.length > 0) {
+      return post.likes.find(
+        (like) => like === (user?.result?.googleId || user?.result?._id)
+      ) ? (
+        <>
+          <ThumbUpAltIcon fontSize="small" />
+          &nbsp;
+          {post.likes.length > 2
+            ? `You and ${post.likes.length - 1} others`
+            : `${post.likes.length} like${post.likes.length > 1 ? "s" : ""}`}
+        </>
+      ) : (
+        <>
+          <ThumbUpOutlined fontSize="small" />
+          &nbsp;{post.likes.length} {post.likes.length === 1 ? "Like" : "Likes"}
+        </>
+      );
+    }
+    return (
+      <>
+        <ThumbUpOutlined fontSize="small" />
+        &nbsp;Like
+      </>
+    );
+  };
 
   const deleteThisPost = (id) => {
     dispatch(deletePost(id));
   };
-  const likeThisPost = (id)=>{
+  const likeThisPost = (id) => {
     dispatch(likePost(id));
-  }
+  };
 
   return (
     <Card className={classes.card}>
@@ -40,17 +68,20 @@ const Post = ({ post, setCurrentId }) => {
           {moment(post.createdAt).fromNow()}
         </Typography>
       </div>
-      <div className={classes.overlay2}>
-        <Button
-          style={{ color: "white" }}
-          size="small"
-          onClick={() => {
-            setCurrentId(post._id);
-          }}
-        >
-          <MoreHorizIcon fontSize="medium" />
-        </Button>
-      </div>
+      {(user?.result?.googleId === post?.creator ||
+        user?.result?._id === post?.creator) && (
+        <div className={classes.overlay2}>
+          <Button
+            style={{ color: "white" }}
+            size="small"
+            onClick={() => {
+              setCurrentId(post._id);
+            }}
+          >
+            <MoreHorizIcon fontSize="medium" />
+          </Button>
+        </div>
+      )}
       <div className={classes.details}>
         <Typography variant="body2" color="textSecondary">
           {post.tags.map((tag) => `#${tag} `)}
@@ -60,22 +91,35 @@ const Post = ({ post, setCurrentId }) => {
         {post.title}
       </Typography>
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p" gutterBottom>{post.message}</Typography>
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          component="p"
+          gutterBottom
+        >
+          {post.message}
+        </Typography>
       </CardContent>
       <CardContent className={classes.cardActions}>
-        <Button size="small" color="primary" onClick={() => likeThisPost(post._id)}>
-          <ThumbUpAltIcon fontSize="small" />
-          &nbsp; Like &nbsp;
-          {post.likes?.length}
-        </Button>
         <Button
           size="small"
           color="primary"
-          onClick={() => deleteThisPost(post._id)}
+          disabled={!user?.result}
+          onClick={() => likeThisPost(post._id)}
         >
-          <DeleteIcon fontSize="small" />
-          Delete
+          <Likes />
         </Button>
+        {(user?.result?.googleId === post?.creator ||
+          user?.result?._id === post?.creator) && (
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => deleteThisPost(post._id)}
+          >
+            <DeleteIcon fontSize="small" />
+            Delete
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

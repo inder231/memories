@@ -7,6 +7,7 @@ import { getFromLocalStorage } from "../../utils/localstorage";
 import { useDispatch } from "react-redux";
 import { GOOGLE_LOGOUT_SUCCESS } from "../../redux/Authreducer/actionTypes";
 import { useNavigate,useLocation } from "react-router-dom";
+import decode from "jwt-decode";
 
 const Navbar = () => {
   const classes = useStyles();
@@ -22,7 +23,11 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = user?.tokenId;
-    // JWT ----
+    // JWT -- verification --
+    if(token){
+      const decodedToken = decode(token);
+      if(decodedToken.exp*1000<new Date().getTime()) logout();
+    }
     setUser(getFromLocalStorage("profile"));
   }, [location]);
 
