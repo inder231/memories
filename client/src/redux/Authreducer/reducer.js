@@ -38,6 +38,26 @@ export const authreducer = (state = initState, { type, payload }) => {
         isAuth: false,
         profile: null,
       };
+    case types.USER_SIGNIN_SUCCESS:
+      saveToLocalStorage("profile", {
+        result: payload.user,
+        token: payload.token,
+      });
+      return {
+        ...state,
+        isAuth: true,
+        profile: payload,
+      };
+    case types.USER_SIGNUP_SUCCESS:
+      saveToLocalStorage("profile", {
+        result: payload.user,
+        token: payload.token,
+      });
+      return {
+        ...state,
+        isAuth: true,
+        profile: payload,
+      };
     default:
       return state;
   }

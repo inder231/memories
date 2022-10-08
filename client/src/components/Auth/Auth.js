@@ -17,6 +17,7 @@ import useStyles from "./styles";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
+import { signin, signup } from "../../redux/Authreducer/auth";
 const initState = {
   firstName: "",
   lastName: "",
@@ -31,23 +32,22 @@ const Auth = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const authstore = useSelector((store) => store.authreducer);
   const [formData, setFormData] = useState(initState);
 
   // ================ FORM CHANGE HANDLES =====================
   const handleChange = (e) => {
-    const {name,value} = e.target;
+    const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
   // ============= FORM SUBMIT =============================
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(isSignup){
+    if (isSignup) {
       // signup user
-      dispatch(signup(formData));
-    }else{
-      // sign in user 
-      dispatch(signin(formData));
+      dispatch(signup(formData,navigate));
+    } else {
+      // sign in user
+      dispatch(signin(formData,navigate));
     }
   };
 
