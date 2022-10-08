@@ -12,8 +12,21 @@ import {
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import { useDispatch } from "react-redux";
+import { deletePost,likePost } from "../../../redux/Appreducer/posts";
+
+
 const Post = ({ post, setCurrentId }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const deleteThisPost = (id) => {
+    dispatch(deletePost(id));
+  };
+  const likeThisPost = (id)=>{
+    dispatch(likePost(id));
+  }
+
   return (
     <Card className={classes.card}>
       <CardMedia
@@ -40,24 +53,26 @@ const Post = ({ post, setCurrentId }) => {
       </div>
       <div className={classes.details}>
         <Typography variant="body2" color="textSecondary">
-          {post.tags.map((tag) => `#${tag}`)}
+          {post.tags.map((tag) => `#${tag} `)}
         </Typography>
       </div>
-        <Typography className={classes.title} variant="h5" gutterBottom>
-          {post.title}
-        </Typography>
+      <Typography className={classes.title} variant="h5" gutterBottom>
+        {post.title}
+      </Typography>
       <CardContent>
-        <Typography gutterBottom>
-          {post.message}
-        </Typography>
+        <Typography variant="body2" color="textSecondary" component="p" gutterBottom>{post.message}</Typography>
       </CardContent>
       <CardContent className={classes.cardActions}>
-        <Button size="small" color="primary" onClick={() => {}}>
+        <Button size="small" color="primary" onClick={() => likeThisPost(post._id)}>
           <ThumbUpAltIcon fontSize="small" />
-          Like
+          &nbsp; Like &nbsp;
           {post.likeCount}
         </Button>
-        <Button size="small" color="primary" onClick={() => {}}>
+        <Button
+          size="small"
+          color="primary"
+          onClick={() => deleteThisPost(post._id)}
+        >
           <DeleteIcon fontSize="small" />
           Delete
         </Button>

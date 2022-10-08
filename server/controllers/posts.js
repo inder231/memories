@@ -33,3 +33,34 @@ export const updatePost = async (req, res) => {
     res.status(404).send(error.message);
   }
 };
+
+export const deletePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).send("No post with that id");
+    await PostMessage.findByIdAndDelete(id);
+    res.status(200).json("Post Delete Successfully");
+  } catch (error) {
+    return res.status(404).send(error.message);
+  }
+};
+
+export const likePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res.status(404).send("No post with this id");
+    const post = await PostMessage.findById(id);
+    const updatedPost = await PostMessage.findByIdAndUpdate(
+      id,
+      {
+        likeCount: post.likeCount + 1,
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedPost);
+  } catch (error) {
+    return res.status(404).send(error.message);
+  }
+};

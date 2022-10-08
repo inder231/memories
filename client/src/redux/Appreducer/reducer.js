@@ -64,6 +64,44 @@ export const appreducer = (state = initState, { type, payload }) => {
         isError: true,
         errorMessage: payload,
       };
+    case types.DELETE_POST_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case types.DELETE_POST_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        posts: state.posts.filter((post) => post._id !== payload),
+      };
+    case types.DELETE_POST_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMessage: payload,
+      };
+    case types.LIKE_POST_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case types.LIKE_POST_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        posts: state.posts.map((post) =>
+          post._id === payload._id ? payload : post
+        ),
+      };
+    case types.LIKE_POST_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMessage: payload,
+      };
     default:
       return state;
   }
