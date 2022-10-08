@@ -4,12 +4,13 @@ import FileBase from "react-file-base64";
 import useStyles from "./styles";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewPost, updatePost } from "../../redux/Appreducer/posts.js";
+import { getFromLocalStorage } from "../../utils/localstorage";
 
 const Form = ({ currentId, setCurrentId }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const user = getFromLocalStorage("profile");
   const [postData, setPostData] = useState({
-    creator: "",
     title: "",
     message: "",
     tags: "",
@@ -23,26 +24,35 @@ const Form = ({ currentId, setCurrentId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (currentId) {
-      dispatch(updatePost(currentId, postData));
+      dispatch(
+        updatePost(currentId, { ...postData, name: user?.result?.name })
+      );
     } else {
-      dispatch(createNewPost(postData));
+      dispatch(createNewPost({ ...postData, name: user?.result?.name }));
     }
     clear();
   };
   const clear = () => {
     setCurrentId(null);
     setPostData({
-      creator: "",
       title: "",
       message: "",
       tags: "",
       selectedFile: "",
     });
   };
-
   useEffect(() => {
     if (post) setPostData(post);
   }, [post]);
+  if (!user) {
+    return (
+      <Paper className={classes.paper}>
+        <Typography variant="h6" align="center">
+          Pleaes Sign in to create your own memory!
+        </Typography>
+      </Paper>
+    );
+  }
   return (
     <>
       <Paper className={classes.paper}>
@@ -55,15 +65,6 @@ const Form = ({ currentId, setCurrentId }) => {
           <Typography variant="h6">{`${
             currentId ? "Editing" : "Creating"
           } a Memory`}</Typography>
-          <TextField
-            variant="outlined"
-            label="Creator"
-            fullWidth
-            value={postData.creator}
-            onChange={(e) =>
-              setPostData({ ...postData, creator: e.target.value })
-            }
-          />
           <TextField
             variant="outlined"
             label="Title"
@@ -87,7 +88,9 @@ const Form = ({ currentId, setCurrentId }) => {
             label="Tags"
             fullWidth
             value={postData.tags}
-            onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(",") })}
+            onChange={(e) =>
+              setPostData({ ...postData, tags: e.target.value.split(",") })
+            }
           />
           <div className={classes.fileInput}>
             <FileBase

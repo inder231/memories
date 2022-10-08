@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import PostMessage from "../models/postMessage.js";
 
+// ========================== GET ALL POST ===============
 export const getPosts = async (req, res) => {
   try {
     const postsMessages = await PostMessage.find();
@@ -9,16 +10,25 @@ export const getPosts = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+// ===================== CREATE NEW POST =================
 export const createPost = async (req, res) => {
   const post = req.body;
-  const newPost = new PostMessage(req.body);
+  const newPost = new PostMessage({
+    ...post,
+    creator: req.userId,
+    createdAt: new Date().toISOString(),
+  });
   try {
     await newPost.save();
     res.status(201).json(newPost);
   } catch (error) {
+    console.log(error);
     res.status(409).json({ message: error.message });
   }
 };
+
+// ======================= UPDATE POST =======================
 export const updatePost = async (req, res) => {
   const { id: _id } = req.params;
   const post = req.body;
@@ -45,7 +55,7 @@ export const deletePost = async (req, res) => {
     return res.status(404).send(error.message);
   }
 };
-
+// ===================== LIKE_POST ===========================
 export const likePost = async (req, res) => {
   try {
     const { id } = req.params;
@@ -58,15 +68,15 @@ export const likePost = async (req, res) => {
       return res.status(404).send("No post with this id");
     }
 
-    const post = await PostMessage.findById(id);
+    let post = await PostMessage.findById(id);
 
-    const index = post.likes.findIndex((id) => id === String(req.userid));
+    const index = post.likes.findIndex((id) => id === String(req.userId));
     if (index === -1) {
       // like the post
       post.likes.push(req.userId);
     } else {
       // deslike the post
-      post.likes.filter((id) => id !== String(req.userId));
+      post.likes = post.likes.filter((id) => id !== String(req.userId));
     }
     const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {
       new: true,
