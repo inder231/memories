@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Typography, Button } from "@material-ui/core";
 import useStyles from "./styles";
 import memories from "../../images/memories.png";
-import { getFromLocalStorage } from "../../utils/localstorage";
+import { getFromLocalStorage, removeFromLocalStorage } from "../../utils/localstorage";
 import { useDispatch } from "react-redux";
 import { GOOGLE_LOGOUT_SUCCESS } from "../../redux/Authreducer/actionTypes";
 import { useNavigate,useLocation } from "react-router-dom";
@@ -20,15 +20,17 @@ const Navbar = () => {
     setUser(null);
     navigate("/");
   };
-
   useEffect(() => {
-    const token = user?.tokenId;
+    const token = user?.token;
     // JWT -- verification --
     if(token){
       const decodedToken = decode(token);
-      if(decodedToken.exp*1000<new Date().getTime()) logout();
+      if(decodedToken.exp*1000<new Date().getTime()){
+        console.log("Token expired");
+        logout();
+      }
+      // console.log("Token is valid")
     }
-    setUser(getFromLocalStorage("profile"));
   }, [location]);
 
   return (

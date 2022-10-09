@@ -55,3 +55,17 @@ export const likePost = (id) => async (dispatch) => {
     dispatch({ type: types.LIKE_POST_FAILURE, payload: error.message });
   }
 };
+
+// SEARCH POSTS ================================
+export const getSearchedPosts = (searchQuery) => async (dispatch) => {
+  dispatch({ type: types.SEARCH_POST_REQUEST });
+  console.log(searchQuery);
+  try {
+    const { data } = await api.fetchPostsBySearch(searchQuery);
+    console.log(data);
+    dispatch({ type: types.SEARCH_POST_SUCCESS, payload: data });
+  } catch (error) {
+    console.log(error);
+    dispatch({ type: types.SEARCH_POST_FAILURE, message: error.message });
+  }
+};

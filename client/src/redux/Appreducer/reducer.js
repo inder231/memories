@@ -102,6 +102,26 @@ export const appreducer = (state = initState, { type, payload }) => {
         isError: true,
         errorMessage: payload,
       };
+      
+    case types.SEARCH_POST_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case types.SEARCH_POST_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        posts: payload.posts
+      };
+    case types.SEARCH_POST_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMessage: payload,
+      };
+
     default:
       return state;
   }

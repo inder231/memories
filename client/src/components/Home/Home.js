@@ -11,10 +11,10 @@ import {
 import Posts from "../Posts/Posts";
 import Form from "../Form/Form";
 import { useDispatch } from "react-redux";
-import { getPosts } from "../../redux/Appreducer/posts";
-import useStyles from "../../styles";
+import { getPosts, getSearchedPosts } from "../../redux/Appreducer/posts";
+import useStyles from "./styles";
 import Pagination from "../Pagination";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChipInput from "material-ui-chip-input";
 
 function useQuery() {
@@ -24,22 +24,46 @@ function useQuery() {
 const Home = () => {
   const classes = useStyles();
   const [currentId, setCurrentId] = useState(0);
+  const [search, setSearch] = useState("");
+  const [tags, setTags] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const query = useQuery();
 
-  const page = query.get('page')||1;
-  const searchQuery = query.get('searchQuery');
+  const page = query.get("page") || 1;
+  const searchQuery = query.get("searchQuery");
 
+  const handleKeyPress = (e) => {
+    if (e.keyCode === 13) {
+      searchPost();
+    }
+  };
+  const handleChipAdd = (tag) => {
+    setTags([...tags, tag]);
+  };
+  const handleChipDelete = (tag, index) =>
+    setTags(() => tags.filter((ele, i) => i !== index));
+  const searchPost = () => {
+    if (search.trim() || tags) {
+      // get searched posts
+      dispatch(getSearchedPosts({ search, tags: tags.join(",") }));
+      navigate(
+        `/posts/search?searchQuery=${search || "none"}&tags=${tags.join(",")}`
+      );
+    } else {
+      navigate("/");
+    }
+  };
   useEffect(() => {
     dispatch(getPosts());
   }, [currentId, dispatch]);
 
   return (
     <Grow in>
-      <Container maxWidth="xl" >
+      <Container maxWidth="xl">
         <Grid
-          className={classes.gridContainer}
           container
+          className={classes.gridContainer}
           justifyContent="space-between"
           alignItems="stretch"
           spacing={3}
@@ -48,8 +72,38 @@ const Home = () => {
             <Posts setCurrentId={setCurrentId} />
           </Grid>
           <Grid item xs={12} sm={4} md={3}>
-            <AppBar className={classes.appBarSearch} position="static" color="inherit" >
-              <TextField name="search" variant="outlined" label="Search Memories" />
+            <AppBar
+              className={classes.appBarSearch}
+              position="static"
+              color="inherit"
+            >
+              <TextField
+                name="search"
+                variant="outlined"
+                label="Search Memories"
+                fullWidth
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                onKeyPress={handleKeyPress}
+              />
+              <ChipInput
+                style={{ margin: "10px 0" }}
+                value={tags}
+                onAdd={(chip) => handleChipAdd(chip)}
+                onDelete={(chip, index) => handleChipDelete(chip, index)}
+                label="Search tags"
+                variant="outlined"
+              />
+              <Button
+                onClick={searchPost}
+                className={classes.searchBar}
+                color="primary"
+                variant="contained"
+              >
+                Search
+              </Button>
             </AppBar>
             <Form currentId={currentId} setCurrentId={setCurrentId} />
             <Paper className={classes.pagination} elevation={6}>
