@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Typography, Button } from "@material-ui/core";
 import useStyles from "./styles";
-import memories from "../../images/memories.png";
-import { getFromLocalStorage, removeFromLocalStorage } from "../../utils/localstorage";
+import memorieslogo from "../../images/memories-Logo.png";
+import memeoriestext from "../../images/memories-Text.png";
+import {
+  getFromLocalStorage,
+  removeFromLocalStorage,
+} from "../../utils/localstorage";
 import { useDispatch } from "react-redux";
 import { GOOGLE_LOGOUT_SUCCESS } from "../../redux/Authreducer/actionTypes";
-import { useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import decode from "jwt-decode";
 
 const Navbar = () => {
@@ -23,9 +27,9 @@ const Navbar = () => {
   useEffect(() => {
     const token = user?.token;
     // JWT -- verification --
-    if(token){
+    if (token) {
       const decodedToken = decode(token);
-      if(decodedToken.exp*1000<new Date().getTime()){
+      if (decodedToken.exp * 1000 < new Date().getTime()) {
         console.log("Token expired");
         logout();
       }
@@ -35,17 +39,15 @@ const Navbar = () => {
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <div className={classes.brandContainer}>
-        <Typography component={Link} to="/" variant="h4" align="center">
-          Memories
-        </Typography>
+      <Link to="/" className={classes.brandContainer}>
+        <img src={memeoriestext} alt="Icon" height="45px" />
         <img
           className={classes.image}
-          src={memories}
-          alt="memories"
-          height="60"
+          src={memorieslogo}
+          alt="memories Logo"
+          height="40px"
         />
-      </div>
+      </Link>
       <Toolbar className={classes.toolbar}>
         {user ? (
           <div className={classes.profile}>

@@ -1,10 +1,10 @@
 import * as api from "./actions";
 import * as types from "./actionTypes";
 // GET POSTS REQUEST ========================
-export const getPosts = () => async (dispatch) => {
+export const getPosts = (page) => async (dispatch) => {
   dispatch({ type: types.GET_POST_REQUEST });
   try {
-    const { data } = await api.fetchPosts();
+    const { data } = await api.fetchPosts(page);
     dispatch({ type: types.GET_POST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: types.GET_POST_FAILURE, payload: error.message });

@@ -1,6 +1,8 @@
 import * as types from "./actionTypes";
 const initState = {
   posts: [],
+  noOfPages:1,
+  currentPage:1,
   isLoading: false,
   isError: false,
   errorMessage: "",
@@ -14,10 +16,13 @@ export const appreducer = (state = initState, { type, payload }) => {
         isLoading: true,
       };
     case types.GET_POST_SUCCESS:
+      console.log(payload);
       return {
         ...state,
         isLoading: false,
-        posts: payload,
+        posts: payload.data,
+        noOfPages:payload.numberOfPages,
+        currentPage: payload.currentPage
       };
     case types.GET_POST_FAILURE:
       return {
