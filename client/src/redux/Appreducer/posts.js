@@ -2,12 +2,12 @@ import * as api from "./actions";
 import * as types from "./actionTypes";
 // GET POSTS REQUEST ========================
 export const getPosts = (page) => async (dispatch) => {
-  dispatch({ type: types.GET_POST_REQUEST });
+  dispatch({ type: types.LOADING });
   try {
     const { data } = await api.fetchPosts(page);
     dispatch({ type: types.GET_POST_SUCCESS, payload: data });
   } catch (error) {
-    dispatch({ type: types.GET_POST_FAILURE, payload: error.message });
+    dispatch({ type: types.ERROR, payload: error.message });
   }
 };
 
@@ -71,9 +71,8 @@ export const commentPost = (value, id) => async (dispatch) => {
   dispatch({ type: types.LOADING });
   try {
     const { data } = await api.comment(value, id);
-    console.log(value,id);
     console.log(data);
-    dispatch({ type: types.COMMENT_POST_SUCCESS, payload: data });
+    return dispatch({ type: types.COMMENT_POST_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: types.ERROR, message: error.message });
   }
@@ -81,13 +80,13 @@ export const commentPost = (value, id) => async (dispatch) => {
 
 // SEARCH POSTS ================================
 export const getSearchedPosts = (searchQuery) => async (dispatch) => {
-  dispatch({ type: types.SEARCH_POST_REQUEST });
+  dispatch({ type: types.LOADING });
 
   try {
     const { data } = await api.fetchPostsBySearch(searchQuery);
 
     dispatch({ type: types.SEARCH_POST_SUCCESS, payload: data });
   } catch (error) {
-    dispatch({ type: types.SEARCH_POST_FAILURE, message: error.message });
+    dispatch({ type: types.ERROR, message: error.message });
   }
 };

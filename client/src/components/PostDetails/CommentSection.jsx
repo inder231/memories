@@ -5,16 +5,25 @@ import { getFromLocalStorage } from "../../utils/localstorage";
 import { commentPost } from "../../redux/Appreducer/posts";
 import useStyles from "./styles";
 import { useState } from "react";
+import { useRef } from "react";
 
 const CommentSection = ({ post }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [comments, setComments] = useState([13, 3, 3]);
+  const { isLoading } = useSelector((store) => store.appreducer);
+  const [comments, setComments] = useState(post.comments);
   const [comment, setComment] = useState("");
   const user = getFromLocalStorage("profile");
+  const commentsRef = useRef();
   const handleAddComment = () => {
     const finalComment = `${user?.result?.name}: ${comment}`;
-    dispatch(commentPost(finalComment, post._id));
+    setComment("");
+    dispatch(commentPost(finalComment, post._id)).then((res) => {
+      if (res.type === "COMMENT_POST_SUCCESS") {
+        setComments(res?.payload?.comments);
+        commentsRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    });
   };
   return (
     <div>
@@ -23,11 +32,14 @@ const CommentSection = ({ post }) => {
           <Typography gutterBottom variant="h6">
             Comments
           </Typography>
-          {comments?.map((c, i) => (
-            <Typography key={i} gutterBottom variant="subtitle1">
-              Comment {i}
-            </Typography>
-          ))}
+          {comments?.length > 0 &&
+            comments?.map((c, i) => (
+              <Typography key={i} gutterBottom variant="subtitle1">
+                <strong>{c.split(":")[0]}</strong>
+                {c.split(":")[1]}
+              </Typography>
+            ))}
+          <div ref={commentsRef} />
         </div>
         {user?.result?.name && (
           <div style={{ width: "70%" }}>
