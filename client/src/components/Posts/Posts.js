@@ -7,12 +7,15 @@ import { CircularProgress, Grid } from "@material-ui/core";
 
 const Posts = ({setCurrentId}) => {
   const classes = useStyles();
-  const posts = useSelector((store) => store.appreducer.posts);
+  const {posts,isLoading,isError} = useSelector((store) => store.appreducer);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getPosts());
   }, []);
-  return !posts.length ? (
+  if(posts.lenght&&!isLoading){
+    return "No posts exist yet."
+  }
+  return isLoading ? (
     <CircularProgress />
   ) : (
     <Grid

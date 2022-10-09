@@ -11,6 +11,17 @@ export const getPosts = (page) => async (dispatch) => {
   }
 };
 
+// GET SINGLE POST =================================
+export const getPost = (id) => async (dispatch) => {
+  dispatch({ type: types.GET_SINGLE_POST_REQUEST });
+  try {
+    const { data } = await api.getPost(id);
+    dispatch({ type: types.GET_SINGLE_POST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: types.GET_SINGLE_POST_FAILURE, payload: error.message });
+  }
+};
+
 // CREATE NEW POSTS REQUEST ========================
 export const createNewPost = (post) => async (dispatch) => {
   dispatch({ type: types.CREATE_POST_REQUEST });
