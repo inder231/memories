@@ -20,7 +20,7 @@ export const auth = async (req, res, next) => {
 
     decodedData
       ? next()
-      : res.status(400).send({ message: "Please login with your credentials" });
+      : res.status(400).json({ message: "Please login with your credentials" });
   } catch (error) {
     return res
       .status(500)

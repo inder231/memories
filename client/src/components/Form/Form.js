@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import FileBase from "react-file-base64";
 import useStyles from "./styles";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createNewPost, updatePost } from "../../redux/Appreducer/posts.js";
 import { getFromLocalStorage } from "../../utils/localstorage";
@@ -9,6 +10,7 @@ import { getFromLocalStorage } from "../../utils/localstorage";
 const Form = ({ currentId, setCurrentId }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const user = getFromLocalStorage("profile");
   const [postData, setPostData] = useState({
     title: "",
@@ -28,7 +30,7 @@ const Form = ({ currentId, setCurrentId }) => {
         updatePost(currentId, { ...postData, name: user?.result?.name })
       );
     } else {
-      dispatch(createNewPost({ ...postData, name: user?.result?.name }));
+      dispatch(createNewPost({ ...postData, name: user?.result?.name },navigate));
     }
     clear();
   };

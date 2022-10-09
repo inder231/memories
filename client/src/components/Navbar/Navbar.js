@@ -16,7 +16,7 @@ import decode from "jwt-decode";
 const Navbar = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const location = useLocation();
+  const {pathname} = useLocation();
   const dispatch = useDispatch();
   const [user, setUser] = useState(getFromLocalStorage("profile"));
   const logout = () => {
@@ -33,9 +33,8 @@ const Navbar = () => {
         console.log("Token expired");
         logout();
       }
-      // console.log("Token is valid")
     }
-  }, [location]);
+  }, [pathname]);
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">

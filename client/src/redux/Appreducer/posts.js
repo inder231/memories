@@ -23,11 +23,12 @@ export const getPost = (id) => async (dispatch) => {
 };
 
 // CREATE NEW POSTS REQUEST ========================
-export const createNewPost = (post) => async (dispatch) => {
+export const createNewPost = (post, navigate) => async (dispatch) => {
   dispatch({ type: types.CREATE_POST_REQUEST });
   try {
     const { data } = await api.createPost(post);
     dispatch({ type: types.CREATE_POST_SUCCESS, payload: data });
+    navigate(`/posts/${data._id}`);
   } catch (error) {
     dispatch({ type: types.CREATE_POST_FAILURE, payload: error.message });
   }
@@ -51,7 +52,6 @@ export const deletePost = (id) => async (dispatch) => {
     await api.deletePost(id);
     dispatch({ type: types.DELETE_POST_SUCCESS, payload: id });
   } catch (error) {
-    console.log(error);
     dispatch({ type: types.DELETE_POST_FAILURE, payload: error.message });
   }
 };
@@ -66,17 +66,28 @@ export const likePost = (id) => async (dispatch) => {
     dispatch({ type: types.LIKE_POST_FAILURE, payload: error.message });
   }
 };
+// COMMENT THE POST ===============================
+export const commentPost = (value, id) => async (dispatch) => {
+  dispatch({ type: types.LOADING });
+  try {
+    const { data } = await api.comment(value, id);
+    console.log(value,id);
+    console.log(data);
+    dispatch({ type: types.COMMENT_POST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: types.ERROR, message: error.message });
+  }
+};
 
 // SEARCH POSTS ================================
 export const getSearchedPosts = (searchQuery) => async (dispatch) => {
   dispatch({ type: types.SEARCH_POST_REQUEST });
-  console.log(searchQuery);
+
   try {
     const { data } = await api.fetchPostsBySearch(searchQuery);
-    console.log(data);
+
     dispatch({ type: types.SEARCH_POST_SUCCESS, payload: data });
   } catch (error) {
-    console.log(error);
     dispatch({ type: types.SEARCH_POST_FAILURE, message: error.message });
   }
 };
