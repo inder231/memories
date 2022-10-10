@@ -17,6 +17,9 @@ app.use(cors());
 
 app.use("/posts",postRoutes);
 app.use("/user",userRouter);
+app.get("/",(req,res)=>{
+    res.send("Memories app running...")
+})
 
 
 app.listen(port,async()=>{
