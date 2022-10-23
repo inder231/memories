@@ -8,6 +8,7 @@ import {
   Typography,
   Container,
 } from "@material-ui/core";
+import ToastService from "react-material-toast";
 import Icon from "./icon";
 import GoogleLogin from "react-google-login";
 import { gapi } from "gapi-script";
@@ -25,6 +26,11 @@ const initState = {
   password: "",
   confirmPassword: "",
 };
+const toast = ToastService.new({
+  place: "topRight",
+  duration: 2,
+  maxCount: 4,
+});
 
 const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +39,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(initState);
-
+  const { isError, error_message } = useSelector((store) => store.authreducer);
   // ================ FORM CHANGE HANDLES =====================
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,10 +50,17 @@ const Auth = () => {
     e.preventDefault();
     if (isSignup) {
       // signup user
-      dispatch(signup(formData,navigate));
+      dispatch(signup(formData, navigate));
     } else {
       // sign in user
-      dispatch(signin(formData,navigate));
+      dispatch(signin(formData)).then((res) => {
+        if (res.type === "USER_SIGNIN_FAILURE") {
+          toast.error(res.payload);
+        } else {
+          toast.success(`Welcome ${res?.payload?.user.name}`);
+          navigate("/");
+        }
+      });
     }
   };
 

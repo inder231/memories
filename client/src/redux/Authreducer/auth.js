@@ -6,11 +6,9 @@ export const signin = (formData, navigate) => async (dispatch) => {
   try {
     // login the user
     const { data } = await api.signin(formData);
-    dispatch({ type: types.USER_SIGNIN_SUCCESS, payload: data });
-    navigate("/");
+    return dispatch({ type: types.USER_SIGNIN_SUCCESS, payload: data });
   } catch (error) {
-    console.log(error);
-    dispatch({ type: types.USER_SIGNIN_FAILURE, payload: error.message });
+    return dispatch({ type: types.USER_SIGNIN_FAILURE, payload: error.message });
   }
 };
 

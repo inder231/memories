@@ -8,6 +8,7 @@ const initState = {
   isError: false,
   isAuth: false,
   profile: null,
+  error_message: null,
 };
 
 export const authreducer = (state = initState, { type, payload }) => {
@@ -39,6 +40,7 @@ export const authreducer = (state = initState, { type, payload }) => {
         profile: null,
       };
     case types.USER_SIGNIN_SUCCESS:
+      console.log(payload);
       saveToLocalStorage("profile", {
         result: payload.user,
         token: payload.token,
@@ -47,6 +49,14 @@ export const authreducer = (state = initState, { type, payload }) => {
         ...state,
         isAuth: true,
         profile: payload,
+        isError:false,
+        error_message: null,
+      };
+    case types.USER_SIGNIN_FAILURE:
+      return {
+        ...state,
+        isError: true,
+        error_message: payload,
       };
     case types.USER_SIGNUP_SUCCESS:
       saveToLocalStorage("profile", {
@@ -57,6 +67,14 @@ export const authreducer = (state = initState, { type, payload }) => {
         ...state,
         isAuth: true,
         profile: payload,
+        isError:false,
+        error_message: null,
+      };
+    case types.USER_SIGNUP_FAILURE:
+      return {
+        ...state,
+        isError: true,
+        error_message: payload,
       };
     default:
       return state;

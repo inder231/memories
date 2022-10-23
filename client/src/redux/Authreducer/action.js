@@ -1,6 +1,5 @@
-import * as types from "./actionTypes";
 import axios from "axios";
-const API = axios.create({baseURL:'https://snap-memories.herokuapp.com'})
+const API = axios.create({baseURL:'http://localhost:5000'})
 
 API.interceptors.request.use((req)=>{
     const profile = JSON.parse(localStorage.getItem("profile"))
