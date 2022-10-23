@@ -55,7 +55,7 @@ const Auth = () => {
       // sign in user
       dispatch(signin(formData)).then((res) => {
         if (res.type === "USER_SIGNIN_FAILURE") {
-          toast.error(res.payload);
+          toast.error("Invalid creadentials. Please try again");
         } else {
           toast.success(`Welcome ${res?.payload?.user.name}`);
           navigate("/");
